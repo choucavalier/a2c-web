@@ -7,12 +7,12 @@
 
 {% block content %}
 
-<h2>Easily convert EPITA algo pseudo-code to C</h2>
+<h2>easily convert EPITA algo pseudo-code to C</h2>
 
 <form action="/" method="post" accept-charset="utf-8">
     {% csrf_token %}
     <div id="algo_code">
-        <h3>Algo code</h3>
+        <h3>algo code</h3>
         {{ form.algo_code }}
     </div>
     <div id="c_code">
@@ -20,7 +20,9 @@
         {{ form.c_code }}
     </div>
     <div style="float: none; clear: both;"></div>
-    <p><input type="submit" value="Convert →"></p>
+    <p><input type="submit" value="Convert & Run →"></p>
 </form>
+
+<pre id="debug"><strong>compilation debug</strong><br/><br/>{{ error }}</pre>
 
 {% endblock content %}

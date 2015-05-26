@@ -23,3 +23,8 @@ body {
 h2 {
     text-align: center;
 }
+
+#debug {
+    padding: 20px;
+    background: #f2f2f2;
+}

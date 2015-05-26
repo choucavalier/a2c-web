@@ -131,9 +131,10 @@ MEDIA_ROOT = '/home/media/toogy/'
 
 CODEMIRROR_DEFAULT_OPTIONS = {
     'mode': 'clike',
-    'indentUnit': 4,
+    'indentUnit': 2,
     'lineNumbers': True,
-    'theme': 'mdn-like',
+    'theme': 'default',
 }
 
 A2C_BINARY = 'a2c'
+A2C_TIMEOUT = 400
