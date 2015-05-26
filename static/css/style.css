@@ -1,0 +1,25 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#wrapper {
+    width: 70%;
+    margin: 0 auto;
+}
+
+#algo_code {
+    float: left;
+    min-width: 50%;
+    max-width: 50%;
+}
+
+#c_code {
+    float: left;
+    min-width: 50%;
+    max-width: 50%;
+}
+
+h2 {
+    text-align: center;
+}

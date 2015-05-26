@@ -123,15 +123,17 @@ TEMPLATES = [
 STATIC_ROOT = '/home/static/a2c/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, '/static'),
+    os.path.join(BASE_DIR, 'static'),
 )
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/media/toogy/'
 
 CODEMIRROR_DEFAULT_OPTIONS = {
-    'mode': 'python',
+    'mode': 'clike',
     'indentUnit': 4,
     'lineNumbers': True,
-    'theme': 'elegant',
+    'theme': 'mdn-like',
 }
+
+A2C_BINARY = 'a2c'

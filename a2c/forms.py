@@ -2,4 +2,5 @@ from django import forms
 from codemirror2.widgets import CodeMirrorEditor
 
 class ConvertForm(forms.Form):
-    code = forms.CharField(widget=CodeMirrorEditor())
+    algo_code = forms.CharField(widget=CodeMirrorEditor())
+    c_code = forms.CharField(widget=CodeMirrorEditor())
