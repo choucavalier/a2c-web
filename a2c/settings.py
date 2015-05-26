@@ -15,7 +15,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
@@ -105,21 +104,34 @@ STATIC_URL = '/static/'
 
 # Custom
 
-TEMPLATE_DIRS = (
-    BASE_DIR + '/templates',
-)
-
-from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-
-TEMPLATE_CONTEXT_PROCESSORS = TCP + (
-    'django.core.context_processors.request',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.core.context_processors.request',
+            ],
+        },
+    },
+]
 
 STATIC_ROOT = '/home/static/a2c/'
 
 STATICFILES_DIRS = (
-    BASE_DIR + '/static',
+    os.path.join(BASE_DIR, '/static'),
 )
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/home/media/toogy/'
+
+CODEMIRROR_DEFAULT_OPTIONS = {
+    'mode': 'python',
+    'indentUnit': 4,
+    'lineNumbers': True,
+    'theme': 'elegant',
+}

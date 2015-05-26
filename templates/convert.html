@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block media %}
+{{ block.super }}
+{{ form.media }}
+{% endblock media %}
+
+{% block content %}
+
+<form action="/" method="post" accept-charset="utf-8">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><input type="submit" value="Convert →"></p>
+</form>
+
+{% endblock content %}
