@@ -39,26 +39,32 @@ def run_algo(c_code):
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
         except TimeoutExpired:
             proc.kill()
-            ret['error'] = 'Timeout while compiling'
+            ret['comp_error'] = 'Timeout while compiling'
             return ret
         except UnicodeDecodeError:
-            ret['error'] = 'Output contains unprintable characters.. Dahell?'
+            ret['comp_error'] = 'Output contains unprintable characters'
             return ret
         ret['comp_return_code'] = proc.returncode
+        if proc.returncode != 0:
+            ret['comp_error'] = stderr
+            return ret
     ret['comp_stdout'] = stdout
-    ret['comp_stderr'] = stderr
     with Popen([tmp_file.name], stdout=PIPE, stderr=PIPE,
                universal_newlines=True) as proc:
         try:
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
         except TimeoutExpired:
             proc.kill()
-            return ('Timeout while running', False)
+            ret['run_error'] = 'Timout while running'
+            return ret
         except UnicodeDecodeError:
-            return ('Output contains unprintable characters.. Dahell?', False)
+            ret['run_error'] = 'Output contains unprintable characters..'
+            return ret
         ret['run_return_code'] = proc.returncode
+        if proc.returncode != 0:
+            ret['error'] = stderr
+            return ret
     ret['run_stdout'] = stdout
-    ret['run_stderr'] = stderr
     return ret
 
 def convert(request):
@@ -72,17 +78,19 @@ def convert(request):
             a2c_output, algo_is_valid = convert_code(algo_code)
             form.data = form.data.copy()
             if not algo_is_valid:
-                context['error'] = a2c_output
+                context['conv_debug'] = a2c_output
                 form.data['c_code'] = '// Compilation Error :(\n' \
                                       '// See a2c\'s output below'
             else:
                 form.data['c_code'] = a2c_output
                 out = run_algo(a2c_output)
-                if 'error' in out:
-                    context['error'] = a2c_output
+                if 'comp_error' in out:
+                    context['comp_debug'] = out['comp_error']
+                elif 'run_error' in out:
+                    context['algo_output'] = out['run_error']
                 else:
+                    context['comp_debug'] = out['comp_stdout']
                     context['algo_output'] = out['run_stdout']
-
 
     context['form'] = form
     return render(request, 'convert.html', context)
