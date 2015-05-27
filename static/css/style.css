@@ -24,7 +24,7 @@ h2 {
     text-align: center;
 }
 
-#debug {
+#debug, #output {
     padding: 20px;
     background: #f2f2f2;
 }

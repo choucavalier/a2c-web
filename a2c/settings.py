@@ -138,3 +138,9 @@ CODEMIRROR_DEFAULT_OPTIONS = {
 
 A2C_BINARY = 'a2c'
 A2C_TIMEOUT = 400
+A2C_GCC_FLAGS = [
+    '-std=c99',
+    '-Wall',
+    '-Werror',
+    '-lm'
+]
