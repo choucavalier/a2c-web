@@ -3,7 +3,8 @@ from a2c.forms import ConvertForm
 from a2c.settings import A2C_BINARY, A2C_TIMEOUT, A2C_GCC_FLAGS
 import tempfile
 import shutil
-from subprocess import Popen, TimeoutExpired, PIPE
+import sys
+from subprocess import Popen, TimeoutExpired, PIPE, STDOUT
 
 def convert_code(algo_code):
     algo_code = algo_code.replace('\r', '')
@@ -33,7 +34,7 @@ def run_algo(c_code):
     tmp_file.close()
     shutil.copy(tmp_file.name, tmp_file.name + '.c')
     args = A2C_GCC_FLAGS + [tmp_file.name + '.c'] + ['-o', tmp_file.name]
-    with Popen(['gcc'] + args, stdout=PIPE, stderr=PIPE, stdin=PIPE,
+    with Popen(['gcc'] + args, stdout=PIPE, stderr=STDOUT,
                universal_newlines=True) as proc:
         try:
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
@@ -46,10 +47,10 @@ def run_algo(c_code):
             return ret
         ret['comp_return_code'] = proc.returncode
         if proc.returncode != 0:
-            ret['comp_error'] = stderr
+            ret['comp_error'] = stdout
             return ret
     ret['comp_stdout'] = stdout
-    with Popen([tmp_file.name], stdout=PIPE, stderr=PIPE,
+    with Popen([tmp_file.name], stdout=PIPE, stderr=STDOUT,
                universal_newlines=True) as proc:
         try:
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
@@ -62,7 +63,7 @@ def run_algo(c_code):
             return ret
         ret['run_return_code'] = proc.returncode
         if proc.returncode != 0:
-            ret['error'] = stderr
+            ret['run_error'] = stderr
             return ret
     ret['run_stdout'] = stdout
     return ret
