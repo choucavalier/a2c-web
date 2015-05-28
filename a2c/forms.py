@@ -1,17 +1,42 @@
 from django import forms
 from codemirror2.widgets import CodeMirrorEditor
 
-DEFAULT_ALGO = '''algorithme fonction add : entier
-  parametres locaux
-    entier a, b
-debut
-  retourne a + b
-fin algorithme fonction add
+#DEFAULT_ALGO = '''algorithme fonction add : entier
+  #parametres locaux
+    #entier a, b
+#debut
+  #retourne a + b
+#fin algorithme fonction add
 
+#variables
+  #booleen variable_globale
+#debut
+  #ecrire(add(5, 5))
+#fin
+#'''
+
+DEFAULT_ALGO = '''algorithme procedure foo
 variables
-  booleen variable_globale
+  t_pile p
 debut
-  ecrire(add(5, 5))
+  p <- pile_vide()
+  empiler(p, 1)
+  empiler(p, 2)
+  empiler(p, 3)
+  ecrire(p^.sommet)
+  ecrire(depiler(p))
+  empiler(p, 4)
+  ecrire(depiler(p))
+  ecrire(depiler(p))
+  ecrire(depiler(p))
+
+  empiler(p, 1)
+  vide_pile(p)
+  ecrire(est_vide(p))
+fin algorithme procedure foo
+
+debut
+  foo()
 fin
 '''
 

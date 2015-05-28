@@ -6,6 +6,8 @@ import shutil
 import sys
 from subprocess import Popen, TimeoutExpired, PIPE, STDOUT
 
+from ratelimit.decorators import ratelimit
+
 def convert_code(algo_code):
     algo_code = algo_code.replace('\r', '')
     tmp_file = tempfile.NamedTemporaryFile(delete=False)
@@ -18,7 +20,8 @@ def convert_code(algo_code):
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
         except TimeoutExpired:
             proc.kill()
-            return ('Timeout while converting', False)
+            return ('Timeout while converting (max {}s)'.format(A2C_TIMEOUT),
+                    False)
         except UnicodeDecodeError:
             return ('Output contains unprintable characters.. Dahell?', False)
         return_code = proc.returncode
@@ -40,7 +43,8 @@ def run_algo(c_code):
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
         except TimeoutExpired:
             proc.kill()
-            ret['comp_error'] = 'Timeout while compiling'
+            ret['comp_error'] = 'Timeout while compiling (max {}s)'\
+                .format(A2C_TIMEOUT)
             return ret
         except UnicodeDecodeError:
             ret['comp_error'] = 'Output contains unprintable characters'
@@ -56,18 +60,21 @@ def run_algo(c_code):
             stdout, stderr = proc.communicate(timeout=A2C_TIMEOUT)
         except TimeoutExpired:
             proc.kill()
-            ret['run_error'] = 'Timout while running'
+            ret['run_error'] = 'Timout while running (max {}s)'\
+                .format(A2C_TIMEOUT)
             return ret
         except UnicodeDecodeError:
             ret['run_error'] = 'Output contains unprintable characters..'
             return ret
         ret['run_return_code'] = proc.returncode
         if proc.returncode != 0:
-            ret['run_error'] = stderr
+            ret['run_error'] = stdout
+            ret['run_stdout'] = stdout
             return ret
     ret['run_stdout'] = stdout
     return ret
 
+@ratelimit(key='ip', rate='20/m', block=True)
 def convert(request):
     context = {}
     form = ConvertForm()
@@ -85,13 +92,18 @@ def convert(request):
             else:
                 form.data['c_code'] = a2c_output
                 out = run_algo(a2c_output)
-                if 'comp_error' in out:
+                if not 'comp_return_code' in out \
+                        or out['comp_return_code'] != 0:
                     context['comp_debug'] = out['comp_error']
-                elif 'run_error' in out:
+                elif not 'run_return_code' in out \
+                    or out['run_return_code'] != 0:
                     context['algo_output'] = out['run_error']
                 else:
                     context['comp_debug'] = out['comp_stdout']
-                    context['algo_output'] = out['run_stdout']
+                    if 'run_stdout' in out:
+                        context['algo_output'] = out['run_stdout']
+                    else:
+                        context['algo_output'] = out['run_return_code']
 
     context['form'] = form
     return render(request, 'convert.html', context)

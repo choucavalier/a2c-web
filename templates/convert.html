@@ -23,12 +23,25 @@
     <p><input type="submit" value="Convert & Run →"></p>
 </form>
 
-<pre id="output"><strong>algo output</strong><br/><br/>{{ algo_output }}</pre>
+{% if not conv_debug and not comp_debug %}
+<pre id="output">
+<strong>algo output</strong><br/>
+{{ algo_output }}
+</pre>
+{% endif %}
 
-<pre id="debug"><strong>conversion debug</strong><br/><br/>
-{{ conv_debug }}</pre>
+{% if conv_debug %}
+<pre id="debug">
+<strong>conversion debug</strong><br/>
+{{ conv_debug }}
+</pre>
+{% endif %}
 
-<pre id="debug"><strong>compilation debug</strong><br/><br/>
-{{ comp_debug }}</pre>
+{% if comp_debug %}
+<pre id="debug">
+<strong>compilation debug</strong><br/>
+{{ comp_debug }}
+</pre>
+{% endif %}
 
 {% endblock content %}
